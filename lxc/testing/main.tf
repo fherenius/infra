@@ -49,6 +49,9 @@ resource "proxmox_lxc" "test-alpine" {
     ssh-ed25519-sk ${ssh_public_key} me@festerherenius.nl
   EOT
 
+  # Start after creation
+  start = true
+
   # Resource allocation
   cores  = 2    # Recommended by K3s
   memory = 1024 # in MB
