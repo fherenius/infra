@@ -6,6 +6,5 @@
   ];
 
   environment.systemPackages = [
-    pkgs.vim
   ];
 }
