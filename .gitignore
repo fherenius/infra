@@ -1,4 +1,4 @@
 .terraform
-lxc/testing/terraform.tfstate.backup
-lxc/testing/terraform.tfstate
-lxc/testing/terraform-plugin-proxmox.log
+terraform.tfstate.backup
+terraform.tfstate
+terraform-plugin-proxmox.log
