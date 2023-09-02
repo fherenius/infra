@@ -16,6 +16,7 @@
           sshUser = "root";
           path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfiguration.vault;
           user = "root";
+          remoteBuild = true;
         };
       };
     };
