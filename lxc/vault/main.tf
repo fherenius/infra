@@ -34,18 +34,19 @@ provider "proxmox" {
   pm_debug            = true
 }
 
-resource "proxmox_lxc" "test-alpine" {
+resource "proxmox_lxc" "vault" {
   # Meta info
   target_node = "kryten"
-  hostname    = "test-alpine"
+  hostname    = "vault"
   pool        = "K3s"
-  description = "Server node for K3s"
+  description = "Vault instance outside of the cluster for secret management."
 
   # OS Config
-  ostemplate      = "local:vztmpl/alpine-3.18-default_20230607_amd64.tar.xz"
+  ostemplate      = "local:vztmpl/nixos-system-x86_64-linux.tar.xz"
   unprivileged    = true
-  password        = "testtest"
+  password        = "testtest" # Does not work with NixOS
   ssh_public_keys = var.ssh_public_key
+  cmode           = "console"
 
   # Start after creation
   start = true
@@ -66,6 +67,7 @@ resource "proxmox_lxc" "test-alpine" {
   network {
     name   = "eth0"
     bridge = "vmbr0"
-    ip     = "dhcp"
+    ip     = "192.168.1.210/24"
+    gw     = "192.168.1.1"
   }
 }
