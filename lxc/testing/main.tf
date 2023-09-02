@@ -10,7 +10,7 @@ terraform {
 variable "ssh_public_key" {
   type        = string
   description = "Public SSH key from Yubikey"
-  default     = file("~/.ssh/id_ed25519_sk.pub")
+  default     = "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAILRsXI5a6WLD6eflNESoq41hjyrsn6ySCe6qKD2m1CvyAAAABHNzaDo= fester@maccie.lan"
 }
 
 variable "token_id" {
@@ -45,9 +45,7 @@ resource "proxmox_lxc" "test-alpine" {
   ostemplate      = "local:vztmpl/alpine-3.18-default_20230607_amd64.tar.xz"
   unprivileged    = true
   password        = "testtest"
-  ssh_public_keys = <<-EOT
-    ssh-ed25519-sk ${ssh_public_key} me@festerherenius.nl
-  EOT
+  ssh_public_keys = var.ssh_public_key
 
   # Start after creation
   start = true
