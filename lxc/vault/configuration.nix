@@ -26,13 +26,26 @@
     };
   };
 
+  # Ensure Vault can be reached from outside
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 8200 ];
+  };
+
   # Config the Vault user
   users.users.vault = {
+    uid = 1000;
     createHome = true;
+    group = "vault";
     home = "/home/vault";
-    isNormalUser = true;
+    isNormalUser = true; 
     openssh.authorizedKeys.keys = [
       "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAILRsXI5a6WLD6eflNESoq41hjyrsn6ySCe6qKD2m1CvyAAAABHNzaDo= fester@maccie.lan"
     ];
+  };
+
+  # Create group
+  users.groups.vault = {
+    members = [ "vault" ];
   };
 }
