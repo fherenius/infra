@@ -1,4 +1,5 @@
-ui = true
+ui            = true
+disable_mlock = true # Requires root access to be true
 
 listener "tcp" {
   address     = "0.0.0.0:8200"
