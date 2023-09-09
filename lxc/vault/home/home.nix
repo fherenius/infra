@@ -15,7 +15,7 @@
   home.file.".config/vault/config.hcl" = {
     enable = true;
     executable = false;
-    source = "./vault-config.hcl";
+    source = ./vault-config.hcl;
   };
 
   # Programs to run at startup
@@ -30,14 +30,10 @@
         WorkingDirectory = "~";
         Restart = "always";
         KillSignal = "SIGTERM";
-        User = "vault";
-        Group = "vault";
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
       };
     };
-  };
-
-  # Environment variables for user
-  systemd.user.sessionVariables = {
-    VAULT_ENABLE_FILE_PERMISSIONS_CHECK = true;
   };
 }
