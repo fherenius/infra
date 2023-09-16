@@ -6,6 +6,7 @@
 
   home.packages = with pkgs; [
     vault-bin
+    backblaze-b2
   ];
 
   home.stateVersion = "23.05";
@@ -18,6 +19,12 @@
     source = ./vault-config.hcl;
   };
 
+  home.file."backblaze_env" = {
+    enable = true;
+    executable = false;
+    source = "./../../../secrets/backblaze_env";
+  };
+  
   # Programs to run at startup
   systemd.user.services = {
     vault = {
