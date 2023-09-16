@@ -48,4 +48,10 @@
   users.groups.vault = {
     members = [ "vault" ];
   };
+
+
+  # Allow user systemd services to run in between restarts without having to login
+  systemd.tmpfiles.rules = [
+    "f /var/lib/systemd/linger/vault"
+  ];
 }
