@@ -18,11 +18,10 @@
     executable = false;
     source = ./vault-config.hcl;
   };
-
   home.file."backblaze_env" = {
     enable = true;
     executable = false;
-    source = "./../../../secrets/backblaze_env";
+    source = config.lib.file.mkOutOfStoreSymlink ./secrets/backblaze_env;
   };
   
   # Programs to run at startup
