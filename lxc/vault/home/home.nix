@@ -18,10 +18,10 @@
     executable = false;
     source = ./vault-config.hcl;
   };
-  home.file."backblaze_env" = {
+  home.file.".config/vault-agent/config.hcl" = {
     enable = true;
     executable = false;
-    source = config.;
+    source = ./vault-agent-config.hcl;
   };
   
   # Programs to run at startup
