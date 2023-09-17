@@ -1,3 +1,5 @@
+exit_after_auth = true
+
 vault {
   address = "http://localhost:8200"
 }
