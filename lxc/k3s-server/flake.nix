@@ -3,29 +3,23 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     deploy-rs.url = "github:serokell/deploy-rs";
-    home-manager.url = "github:nix-community/home-manager";
   };
   
   outputs = { self, nixpkgs, deploy-rs, home-manager, ... }: {
-    nixosConfiguration.vault = nixpkgs.lib.nixosSystem {
+    nixosConfiguration.k3s-server-0 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [ 
         ./configuration.nix
-        home-manager.nixosModules.home-manager {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.vault = import ./home/home.nix;
-        }
       ];
     };
 
-    deploy.nodes.vault = {
-      hostname = "192.168.1.210";
+    deploy.nodes.k3s-server-0 = {
+      hostname = "192.168.1.220";
       fastConnection = true;
       profiles = {
         system = {
           sshUser = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfiguration.vault;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfiguration.k3s-server-0;
           user = "root";
           autoRollback = false;
           magicRollback = false;

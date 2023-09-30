@@ -30,6 +30,14 @@
     disableAgent = true; # Don't run an agent service on this node
   };
 
-  # K3s config file
-  environment.etc.
+  environment.etc = {
+    # K3s config file
+    "rancher/k3s/config.yaml" = {
+      mode = "0400";
+      text = ''        
+        agent-token: "agent-token"
+        egress-selector-mode: "cluster"
+      '';
+    };
+  };
 }
