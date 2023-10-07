@@ -27,6 +27,8 @@
   services.k3s = {
     enable = true;
     role = "agent"; # Run this node as server
+    serverAddr = "https://192.168.1.220:6443";
+    token = "agent-token";
   };
 
   environment.etc = {
@@ -34,9 +36,7 @@
     "rancher/k3s/config.yaml" = {
       mode = "0400";
       text = ''        
-        token: "agent-token"
-        egress-selector-mode: "cluster"
-        server: "192.168.1.220"
+        kubelet-arg: feature-gates=KubeletInUserNamespace=true
       '';
     };
   };

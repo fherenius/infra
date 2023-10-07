@@ -37,6 +37,9 @@
       text = ''        
         agent-token: "agent-token"
         egress-selector-mode: "cluster"
+        kubelet-arg: feature-gates=KubeletInUserNamespace=true
+        kube-controller-manager-arg: feature-gates=KubeletInUserNamespace=true
+        kube-apiserver-arg: feature-gates=KubeletInUserNamespace=true
       '';
     };
   };
