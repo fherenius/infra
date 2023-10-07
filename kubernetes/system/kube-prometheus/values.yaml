@@ -1,0 +1,18 @@
+kube-prometheus-stack:
+  defaultRules:
+    rules:
+      alertmanager: false
+  alertmanager:
+    enabled: false
+  grafana:
+    enabled: true
+    ingress:
+      enabled: true
+      hosts:
+        - grafana.k3s.lan
+  prometheus:
+    enabled: true
+    ingress:
+      enabled: true
+      hosts:
+        - prometheus.k3s.lan

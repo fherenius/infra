@@ -1,3 +1,7 @@
+# Don't include downloaded helm charts in version control
+charts
+
+# Terraform stuff
 .terraform
 .terraform.lock.hcl
 terraform.tfstate.backup
