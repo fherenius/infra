@@ -22,13 +22,28 @@
       system = "aarch64-linux";
       modules = [
         ./machines/vm-aarch64-utm.nix
-        ./users/fester/user.nix
+        ./users/fester/configuration.nix
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.fester = import ./users/fester/home.nix;
         }
       ];
+    };
+
+    deploy.nodes.dev-vm = {
+      hostname = "192.168.64.2";
+      fastConnection = true;
+      profiles = {
+        system = {
+          sshUser = "root";
+          path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigrations.devVm;
+          user = "root";
+          autoRollback = false;
+          magicRollback = false;
+          remoteBuild = true;
+        };
+      };
     };
   };
 }
