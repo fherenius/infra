@@ -1,8 +1,20 @@
 { config, pkgs, lib, modulesPath, ... }: {
   # Import hardware configuration
   imports = [
-    ./hardware/vm-aarch64-utm.nix
+    ./hardware/vm-aarch64-vmware.nix
+    ../modules/vmware-guest.nix
   ];
+
+  # Setup qemu so we can run x86_64 binaries
+  boot.binfmt.emulatedSystems = ["x86_64-linux"];
+
+  # Disable the default module and import our override. We have
+  # customizations to make this work on aarch64.
+  disabledModules = [ "virtualisation/vmware-guest.nix" ];
+
+  # This works through our custom module imported above
+  virtualisation.vmware.guest.enable = true;
+
 
   # Careful updating this
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -22,7 +34,10 @@
     ];
 
     # Need this for hardware acceleration to work
-    variables.LIBGL_ALWAYS_SOFTWARE = "1";
+    variables = {
+      LIBGL_ALWAYS_SOFTWARE = "1";
+      WLR_NO_HARDWARE_CURSORS = "1"; # Required for cursor to work in Wayland
+    };
   };
 
   # Add version of Nix that the host is running
@@ -30,13 +45,12 @@
 
   # Network interface on the M1
   networking = {
-    interfaces.enp0s10.useDHCP = true;
+    interfaces.enp160.useDHCP = true;
     hostName = "dev-vm";
-    useDHCP = false;
+    useDHCP = true;
   };
 
   # Qemu
-  services.spice-vdagentd.enable = true;
   hardware.opengl.enable = true;
 
   # Systemd EFI bootloader
@@ -73,12 +87,40 @@
   # but now I don't get to use PipeWire
   sound.enable = false;
 
+  # Setting up xserver
+  services.xserver = {
+    enable = true;
+    dpi = 227;
+
+    desktopManager = {
+      xterm.enable = false;
+    };
+    displayManager = {
+      defaultSession = "none+i3";
+      lightdm.enable = true;
+
+      # AARCH64: For now, on Apple Silicon, we must manually set the
+      # display resolution. This is a known issue with VMware Fusion.
+      sessionCommands = ''
+        ${pkgs.xorg.xset}/bin/xset r rate 200 40
+        ${pkgs.xorg.xrandr}/bin/xrandr -s '2880x1800'
+      '';
+    };
+
+    windowManager = {
+      i3.enable = true;
+    };
+  };
+
   time.timeZone = "Europe/Amsterdam";
 
   services.openssh = {
     enable = true;
-    PermitRootLogin = "no";
-    PasswordAuthentication = false;    
+    settings = {
+      # Add my own SSH key as accepted public key here
+      PermitRootLogin = "no";
+      PasswordAuthentication = true;    
+    };
   };
 
   users = {

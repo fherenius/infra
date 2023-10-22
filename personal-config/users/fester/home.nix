@@ -33,17 +33,32 @@
     enable = true;
   };
 
-  
- wayland.windowManager.sway = {
-    enable = true;
-    config = {
-      modifier = "Mod4";
-      # Use kitty as default terminal
-      terminal = "alacritty"; 
-      startup = [
-        # Launch Firefox on start
-        {command = "firefox";}
-      ];
+  # Copy config files
+  xdg.configFile = {
+    "alacritty/alacritty.yml" = {
+      source = ./alacritty.yml;
     };
   };
+
+  xresources.extraConfig = builtins.readFile ./Xresources;
+
+  xsession.windowManager.i3 = {
+    enable = true;
+  };
+  
+  # Wayland config
+  #wayland.windowManager.sway = {
+  #  enable = true;
+  #  config = {
+  #    modifier = "Mod4";
+  #    # Use kitty as default terminal
+  #    terminal = "alacritty"; 
+  #    output = {
+  #      Virtual-1 = {
+  #        mode = "1920x1200@59.885Hz";
+  #        scale = "1.25";
+  #      };
+  #    };
+  #  };
+  #};
 }

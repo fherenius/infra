@@ -18,10 +18,10 @@
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, deploy-rs, home-manager, ... }: {
-    nixosConfigurations.devVm = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.dev-vm = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
       modules = [
-        ./machines/vm-aarch64-utm.nix
+        ./machines/vm-aarch64-vmware.nix
         ./users/fester/configuration.nix
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
@@ -37,7 +37,7 @@
       profiles = {
         system = {
           sshUser = "root";
-          path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigrations.devVm;
+          path = deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.dev-vm;
           user = "root";
           autoRollback = false;
           magicRollback = false;
