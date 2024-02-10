@@ -1,0 +1,116 @@
+import "@k8s/K8sResource.pkl"
+import "@k8s/api/apps/v1/Deployment.pkl"
+import "@k8s/api/core/v1/Namespace.pkl"
+import "@k8s/api/core/v1/SecurityContext.pkl"
+import "@k8s/api/core/v1/ServiceAccount.pkl"
+import "@k8s/api/rbac/v1/ClusterRole.pkl"
+import "@k8s/api/rbac/v1/ClusterRoleBinding.pkl"
+
+deployedNamespace: String = "keydb-operator"
+deployedServiceAccount: String = "keydb-operator"
+
+resources: Listing<K8sResource> = new {
+  new Namespace {
+    metadata {
+      name = deployedNamespace
+      labels {
+        ["pod-security.kubernetes.io/enforce"] = "restricted"
+      }
+    }
+  }
+  new ServiceAccount {
+    metadata {
+      name = deployedServiceAccount
+      namespace = deployedNamespace
+    }
+  }
+  new ClusterRole {
+    metadata {
+      name = "keydb-operator"
+    }
+    rules {
+      new {
+        apiGroups {
+          ""
+        }
+        resources {
+          "pods"
+        }
+        verbs {
+          "get"
+          "list"
+          "watch"
+        }
+      }
+    }
+  }
+  new ClusterRoleBinding {
+    metadata {
+      name = "keydb-operator"
+    }
+    roleRef {
+      name = "keydb-operator"
+      kind = "ClusterRole"
+      apiGroup = "rbac.authorization.k8s.io"
+    }
+    subjects {
+      new {
+        name = deployedServiceAccount
+        namespace = deployedNamespace
+        kind = "ServiceAccount"
+      }
+    }
+  }
+  new Deployment {
+    metadata {
+      name = "keydb-operator"
+      namespace = deployedNamespace
+    }
+    spec {
+      selector {
+        matchLabels {
+          ["operator"] = "keydb"
+        }
+      }
+      replicas = 3
+      template {
+        metadata {
+          labels {
+            ["operator"] = "keydb"
+          }
+        }
+        spec {
+          serviceAccountName = deployedServiceAccount
+          containers {
+            new {
+              imagePullPolicy = "Always"
+              name = "keydb-operator"
+              image = "ghcr.io/fherenius/keydb-operator:main"
+              securityContext = new SecurityContext {
+                allowPrivilegeEscalation = false
+                readOnlyRootFilesystem = true
+                privileged = false
+                runAsNonRoot = true
+                seccompProfile {
+                  type = "RuntimeDefault"
+                }
+                capabilities {
+                  drop {
+                    "ALL"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+output {
+  value = resources
+  renderer = (K8sResource.output.renderer as YamlRenderer) {
+    isStream = true
+  }
+}
